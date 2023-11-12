@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:setupin/screens/item_list.dart';
+import 'package:setupin/screens/shoplist_form.dart';
+import 'package:setupin/widgets/left_drawer.dart';
+import 'package:setupin/widgets/shop_card.dart';
 
 
 
@@ -26,7 +30,11 @@ class MyHomePage extends StatelessWidget {
         title: const Text(
           'Shopping List',
         ),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
       ),
+      drawer: const LeftDrawer(),
+
       body: SingleChildScrollView(
         // Widget wrapper yang dapat discroll
         child: Padding(
@@ -38,7 +46,7 @@ class MyHomePage extends StatelessWidget {
                 padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                 // Widget Text untuk menampilkan tulisan dengan alignment center dan style yang sesuai
                 child: Text(
-                  'PBP Shop', // Text yang menandakan toko
+                  'SETUPIN', // Text yang menandakan toko
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 30,
@@ -139,13 +147,7 @@ class MyHomePage extends StatelessWidget {
 // }
 
 
-class ShopItem {
-  final String name;
-  final IconData icon;
-  final Color color;
 
-  ShopItem(this.name, this.icon, this.color);
-}
 
 class ShopCard extends StatelessWidget {
   final ShopItem item;
@@ -164,6 +166,23 @@ class ShopCard extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
                 content: Text("Kamu telah menekan tombol ${item.name}!")));
+
+          if (item.name == "Tambah Item") {
+            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute yang mencakup ShopFormPage. (SUDAH)
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ShopFormPage()),
+          );
+          }
+
+          if (item.name == "Lihat Item") {
+          // TODO: Use Navigator.push to navigate to the MaterialPageRoute that includes ItemListPage.
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ItemListPage()),
+          );
+        }
+
         },
         child: Container(
           // Container untuk menyimpan Icon dan Text

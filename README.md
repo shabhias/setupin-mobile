@@ -1,3 +1,207 @@
+# TUGAS 8
+
+## Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement(), disertai dengan contoh mengenai penggunaan kedua metode tersebut yang tepat!
+
+- Metode Navigator.push() digunakan untuk menambahkan halaman baru ke dalam tumpukan navigasi. Ketika menggunakan metode ini, halaman baru ditambahkan di atas halaman saat ini, dan pengguna dapat kembali ke halaman sebelumnya dengan menekan tombol kembali.
+
+Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) => HalamanBaru()),
+);
+
+
+- Metode Navigator.pushReplacement() digunakan untuk menggantikan halaman saat ini dengan halaman baru. Ketika menggunakan metode ini, halaman saat ini dihapus dari tumpukan navigasi dan digantikan dengan halaman baru. Ini berguna ketika Anda ingin mengganti halaman saat ini dengan halaman baru dan tidak ingin pengguna dapat kembali ke halaman sebelumnya.
+
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(builder: (context) => HalamanBaru()),
+);
+
+- perbedaan utama antara Navigator.push() dan Navigator.pushReplacement() adalah bahwa Navigator.push() menambahkan halaman baru ke dalam tumpukan navigasi, sementara Navigator.pushReplacement() menggantikan halaman saat ini dengan halaman baru.
+
+
+## Sebutkan apa saja elemen input pada form yang kamu pakai pada tugas kali ini dan jelaskan mengapa kamu menggunakan elemen input tersebut!
+
+Element input yang saya gunakan adalah TextField, yaitu pada input name, amount, dan juga description. Penggunaan TextFormField sangat berguna dalam memberikan fleksibilitas untuk menerima berbagai jenis input. 
+
+## Bagaimana penerapan clean architecture pada aplikasi Flutter?
+
+Clean architecture merupakan pemisahan kode dengan beberapa file dengan memiliki tanggung jawab yang berbeda-beda. Sebelum menerapkan ini, kita harus mengetahui konsep MVVM (Model View ViewModel)Dengan memisahkan lapisan presentasi, lapisan domain, dan lapisan data, menjadi lebih mudah untuk memodifikasi dan memperluas kode tanpa menambahkan kompleksitas yang tidak perlu. 
+
+1. Domain Layer:
+    Entities: Representasi objek bisnis atau model domain yang independen dari infrastruktur.
+    Use Cases (Interactors): Berisi logika bisnis (use cases) yang menggambarkan bagaimana data dan operasi terkait harus dijalankan.
+
+2. Data Layer:
+    Repositories: Abstraksi yang mendefinisikan cara mengakses dan menyimpan data. Repositori bertanggung jawab untuk berkomunikasi dengan data sources, seperti API, database lokal, atau cache.
+    Data Sources: Mengimplementasikan akses konkret ke data, seperti remote API atau local database.
+
+3. Presentation Layer:
+    UI (User Interface): Menangani logika presentasi dan menampilkan data ke pengguna. Widget Flutter berada di lapisan ini.
+    ViewModels atau Presenters: Menghubungkan antara Use Cases dari Domain Layer dengan UI. Merupakan penghubung antara UI dan logika bisnis.
+
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step!
+
+1. Membuat form yang memiliki tiga elemen input, yaitu name, amount, description dengan membuat file baru shoplist_form.dart. Pada file tersebut mengimplementasi halaman formulir Flutter (ShopFormPage) yang memungkinkan pengguna untuk memasukkan nama item, jumlah, dan deskripsi. Formulir ini menggunakan validasi untuk memastikan setiap elemen input tidak kosong dan sesuai dengan tipe datanya. Saat pengguna menekan tombol "Save," aplikasi akan menampilkan dialog konfirmasi dengan data yang diisi. Setelah pengguna menekan tombol "OK" pada dialog, item baru dibuat sebagai objek ShopDesc dan disimpan ke dalam list savedItems. Ini menerapkan pola Clean Architecture dengan memisahkan logika bisnis (mengenai penyimpanan item) dari tampilan dan mengikuti prinsip Flutter untuk pemisahan widget menjadi komponen yang terpisah.
+
+2. Mengarahkan pengguna ke halaman form tambah item baru ketika menekan tombol Tambah Item pada halaman utama.
+
+'''
+    if (item.name == "Tambah Item") {
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ShopFormPage()),
+    );
+    }
+
+Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute yang mencakup ShopFormPage
+
+3. Memunculkan data sesuai isi dari formulir yang diisi dalam sebuah pop-up setelah menekan tombol Save pada halaman formulir tambah item baru
+
+'''
+                onPressed: () 
+                if (_formKey.currentState!.validate()) 
+                  showDialog
+                        context: context,
+                        builder: (context) 
+                          return AlertDialog
+                            title: const Text('Item berhasil tersimpan'),
+                            content: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text('Nama: $_name'),
+                                  Text('Amount: $_amount'),
+                                  Text('Deskripsi: $_description'),
+                                
+                                ],
+                              ),
+                            ),
+                            actions: 
+                              TextButton
+                                child: const Text('OK'),
+                                onPressed: () 
+                                  Navigator.pop(context);
+
+
+## Membuat sebuah drawer pada aplikasi 
+
+1. Membuat left_drawer.dart
+
+2. 
+
+'''
+          ListTile(
+            leading: const Icon(Icons.home_outlined),
+            title: const Text('Halaman Utama'),
+            // Bagian redirection ke MyHomePage
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHomePage(),
+                  ));
+            },
+          ),
+          ListTile(
+              leading: const Icon(Icons.add_shopping_cart),
+              title: const Text('Tambah Item'),
+              // Bagian redirection ke ShopFormPage
+              onTap: () {
+                /*
+                TODO: Buatlah routing ke ShopFormPage di sini,
+                setelah halaman ShopFormPage sudah dibuat. (SUDAH)
+                */
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShopFormPage()),
+              );
+
+              },
+          ),
+          ListTile(
+                leading: const Icon(Icons.checklist),
+                title: const Text('Lihat Item'), // Menuju halaman daftar item
+                onTap: () {
+                  Navigator.pop(context); // Close the drawer if it's in the drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ItemListPage()),
+              );
+             },
+          ),
+
+Kode tersebut mendefinisikan tiga ListTile dalam sebuah drawer pada aplikasi Flutter. Pertama, ListTile dengan ikon rumah (home_outlined) dan teks "Halaman Utama" akan mengarahkan pengguna kembali ke halaman utama (MyHomePage) saat ditekan. Kedua, ListTile dengan ikon keranjang belanja (add_shopping_cart) dan teks "Tambah Item" akan mengarahkan pengguna ke halaman formulir tambah item (ShopFormPage) saat ditekan. Terakhir, ListTile dengan ikon checklist (checklist) dan teks "Lihat Item" akan menutup drawer (jika terbuka) dan mengarahkan pengguna ke halaman daftar item (ItemListPage). Dengan menggunakan Navigator.push dan MaterialPageRoute, aplikasi dapat melakukan navigasi antar-halaman dengan responsif.
+
+
+
+## BONUS
+
+1. membuat class ShopDesc yang didalamnya ada list, untuk menampung item yang sudah di save dengan field nama, amount, dan description. 
+2. Kemudian menambahkan left drawer untuk lihat Item 
+''' 
+          ListTile(
+                title: const Text('Lihat Item'), // Menuju halaman daftar item
+                onTap: () {
+                  Navigator.pop(context); // Close the drawer if it's in the drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ItemListPage()),
+              );
+             },
+          ),
+3. Menambahkan item yang sudah di save di form 
+'''
+          setState(() {
+            ShopDesc newItem = ShopDesc(
+              name: _name,
+              amount: _amount,
+              description: _description,
+            );
+
+            // Menyimpan item ke dalam list savedItems
+            newItem.saveItem();
+            });
+
+4. Membuat file item_list.dart untuk menampilkan list item yang sudah disimpan
+'''
+          class ItemListPage extends StatelessWidget {
+            @override
+            Widget build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Daftar Item'),
+                ),
+                body: ShopDesc.savedItems.isEmpty
+                    ? Center(child: const Text('Belum ada item yang dibuat'))
+                    : ListView.builder(
+                        itemCount: ShopDesc.savedItems.length,
+                        itemBuilder: (context, index) {
+                          ShopDesc item = ShopDesc.savedItems[index];
+                          return ListTile(
+                            title: Text(item.name),
+                            subtitle: Text('Amount: ${item.amount} | Deskripsi: ${item.description}'),
+                          );
+                        },
+                      ),
+              );
+            }
+          }
+
+<br>
+<hr>
+
+
+
+
+
+
+
+
+
+
 # TUGAS 7
 
 ## Apa perbedaan utama antara stateless dan stateful widget dalam konteks pengembangan aplikasi Flutter?

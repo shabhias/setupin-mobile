@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:setupin/menu.dart';
+import 'package:setupin/screens/menu.dart';
 
 
 void main() {
