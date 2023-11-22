@@ -1,3 +1,184 @@
+# TUGAS 9
+
+## Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+
+- Ya, kita dapat melakukan pengambilan data JSON tanpa membuat model terlebih dahulu, dengan menggunakan dynamic dan menggunakan package 'dart:convert'
+
+- Terdapat kekurangannya, yaitu ketidakpastian tipe data dan struktur yang kurang. Tetapi cocok untuk implementasi yang sederhana.
+
+
+
+## Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+
+- Fungsi dari cookieRequest adalah untuk mengirim permintaan HTTP yang menyertakan cookie. Ketika kita melakukan permintaan HTTP, server dapat mengirimkan cookie sebagai bagian dari responsnya. Cookie ini kemudian dapat disimpan oleh aplikasi dan dikirim kembali ke server dalam permintaan berikutnya.
+
+- Instance CookieRequest perlu dibagikan ke semua komponen di aplikasi Flutter agar setiap komponen dapat menggunakan cookie yang sama saat melakukan permintaan HTTP. Dengan membagikan instance CookieRequest, kita dapat memastikan bahwa setiap komponen menggunakan cookie yang sama dan tidak ada konflik dalam penggunaan cookie di aplikasi.
+
+
+
+## Jelaskan mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter.
+
+- kita perlu mengambil data dari web service yang menyediakan data dalam format JSON. Dalam flutter, menggunakan package http
+
+- Setelah mendapatkan respons JSON dari web service, kita perlu mengolah data tersebut agar dapat digunakan dalam aplikasi Flutter. Kita dapat menggunakan package dart:convert untuk mengubah respons JSON menjadi objek Dart yang dapat digunakan dalam aplikasi.
+
+- Setelah mengubah respons JSON menjadi objek Dart, kita dapat menggunakan objek tersebut untuk menampilkan data pada antarmuka pengguna (UI) Flutter. Kita dapat menggunakan widget seperti Text atau yang lainnya untuk menampilkan data dari objek Dart tersebut.
+
+
+
+## Jelaskan mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+- Flutter mengirim permintaan autentikasi ke server Django menggunakan permintaan HTTP. Permintaan ini biasanya berisi data akun yang dimasukkan oleh pengguna.
+
+-  Django menerima permintaan autentikasi dari Flutter dan memprosesnya. Django akan memeriksa data akun yang diberikan dan membandingkannya dengan data yang tersimpan dalam basis data. Jika data akun valid, Django akan menghasilkan token autentikasi yang akan digunakan untuk mengidentifikasi pengguna yang terautentikasi.
+
+- Setelah pengguna terautentikasi, Flutter dapat mengirim permintaan ke server Django untuk mendapatkan data menu yang akan ditampilkan pada antarmuka pengguna (UI) Flutter. Permintaan ini biasanya menggunakan token autentikasi yang disertakan dalam header permintaan HTTP.
+
+- jango memproses permintaan menu dari Flutter dan mengirimkan respons yang berisi data menu yang diminta. Respons ini biasanya dalam format JSON.
+
+-  Flutter menerima respons menu dari Django dan menampilkan data menu tersebut
+
+
+
+
+## Sebutkan seluruh widget yang kamu pakai pada tugas ini dan jelaskan fungsinya masing-masing.
+
+- productPage widget: untuk mengambil data produk dari suatu URL.
+- AppBar menampilkan judul "Product".
+- LeftDrawer = menu navigasi 
+- Container, Column, Test = utnuk menampilkan data product 
+
+
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+
+
+- Membuat halaman login pada proyek tugas Flutter dan Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
+  1. Setup Autentikasi pada Django untuk Flutter
+  membuat django-app bernama authentication. Kemudian menambhakan beberapa variable: 
+  CORS_ALLOW_ALL_ORIGINS = True
+  CORS_ALLOW_CREDENTIALS = True
+  CSRF_COOKIE_SECURE = True
+  SESSION_COOKIE_SECURE = True
+  CSRF_COOKIE_SAMESITE = 'None'
+  SESSION_COOKIE_SAMESITE = 'None'
+  
+  lalu membuat metode view untuk login 
+
+
+  2. Integrasi Sistem Autentikasi pada Flutter
+
+  menggunakan package provider dan  memodifikasi root widget buntuk menyediakan CookieRequest library ke semua child widgets dengan menggunakan Provider. Kemudian membuat file login.dart untuk membuat halaman loginnya
+  
+
+- Membuat model kustom sesuai dengan proyek aplikasi Django.
+  menggunakan situs web Quicktype untuk mendapatkan kode model dari Json dan 
+
+
+
+- Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
+
+MELAKUKAN FETCH DATA DARI DJANGO
+
+'''
+import 'package:<APP_NAME>/widgets/left_drawer.dart';
+
+class ProductPage extends StatefulWidget {
+    const ProductPage({Key? key}) : super(key: key);
+
+    @override
+    _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+Future<List<Product>> fetchProduct() async {
+    // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+    var url = Uri.parse(
+        'http://<URL_APP_KAMU>/json/');
+    var response = await http.get(
+        url,
+        headers: {"Content-Type": "application/json"},
+    );
+
+    // melakukan decode response menjadi bentuk json
+    var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+    // melakukan konversi data json menjadi object Product
+    List<Product> list_product = [];
+    for (var d in data) {
+        if (d != null) {
+            list_product.add(Product.fromJson(d));
+        }
+    }
+    return list_product;
+}
+
+@override
+Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+        title: const Text('Product'),
+        ),
+        drawer: const LeftDrawer(),
+        body: FutureBuilder(
+            future: fetchProduct(),
+            builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                    return const Center(child: CircularProgressIndicator());
+                } else {
+                    if (!snapshot.hasData) {
+                    return const Column(
+                        children: [
+                        Text(
+                            "Tidak ada data produk.",
+                            style:
+                                TextStyle(color: Color(0xff59A5D8), fontSize: 20),
+                        ),
+                        SizedBox(height: 8),
+                        ],
+                    );
+                } else {
+                    return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (_, index) => Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                    Text(
+                                    "${snapshot.data![index].fields.name}",
+                                    style: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                    ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text("${snapshot.data![index].fields.price}"),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                        "${snapshot.data![index].fields.description}")
+                                ],
+                                ),
+                            ));
+                    }
+                }
+            }));
+    }
+}
+
+
+
+
+
+
+
+
+<br>
+<hr>
+
+
 # TUGAS 8
 
 ## Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement(), disertai dengan contoh mengenai penggunaan kedua metode tersebut yang tepat!
